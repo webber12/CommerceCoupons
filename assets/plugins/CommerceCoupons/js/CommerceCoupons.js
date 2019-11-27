@@ -1,4 +1,11 @@
 var CommerceCoupons = {
+    bind: function() {
+        var self = this;
+        $(document).on("click", "[data-commerce-coupon-add]", function(e){
+            e.preventDefault();
+            self.add();
+        })
+    },
     add: function(){
         if ($("[data-commerce-coupon]").length == 1) {
             var coupon = $("[data-commerce-coupon]").val();
@@ -35,13 +42,16 @@ var CommerceCoupons = {
 // commerce-coupon-ok-add
 */
 $(document).ready(function(){
+
+    CommerceCoupons.bind();
+
     $(document).on("commerce-coupon-ok-add", function(){
         Commerce.updateCarts();
     })
-	$(document).on("commerce-coupon-error-limits", function(){
+    $(document).on("commerce-coupon-error-limits", function(){
         Commerce.updateCarts();
     })
-	$(document).on("commerce-coupon-error-unactive", function(){
+    $(document).on("commerce-coupon-error-unactive", function(){
         Commerce.updateCarts();
     })
 })

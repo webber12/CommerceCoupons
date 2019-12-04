@@ -62,7 +62,7 @@ class CommerceCouponsController
     {
         $output = ['status' => 'error', 'message' => 'unactive'];
         $time = date("Y-m-d", time());
-        $sql = "SELECT id,limit_orders FROM " . $this->table . " WHERE active=1 AND `code`='" . $coupon . "' AND (date_start IS NULL OR `date_start`<='" . $time . "') AND (date_finish IS NULL OR `date_finish`>='" . $time . "') LIMIT 0,1";
+        $sql = "SELECT id,limit_orders FROM " . $this->table . " WHERE active=1 AND BINARY `code`='" . $coupon . "' AND (date_start IS NULL OR `date_start`<='" . $time . "') AND (date_finish IS NULL OR `date_finish`>='" . $time . "') LIMIT 0,1";
         $q = $this->modx->db->query($sql);
         if ($this->modx->db->getRecordCount($q) > 0) {
             $row = $this->modx->db->getRow($q);

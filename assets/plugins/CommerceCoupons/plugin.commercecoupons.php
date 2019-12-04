@@ -29,7 +29,7 @@ switch ($e->name) {
                 break;
             }
             $params['total'] -= $summ;
-            $params['rows']['discount'] = [
+            $params['rows']['CommerceCoupons'] = [
                 'title' => 'Скидка по купону <b>' . $discount['code'] . '</b>',
                 'price' => -$summ,
             ];

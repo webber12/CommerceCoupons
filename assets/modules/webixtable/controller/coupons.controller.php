@@ -68,5 +68,12 @@ class CouponsController extends \WebixTable\MainController
         return $data;
     }
 
+    protected function invokeOnBeforeUpdateInline($data)
+    {
+        if (empty($data['date_start'])) $data['date_start'] = NULL;
+        if (empty($data['date_finish'])) $data['date_finish'] = NULL;
+        return $data;
+    }
+
 }
 

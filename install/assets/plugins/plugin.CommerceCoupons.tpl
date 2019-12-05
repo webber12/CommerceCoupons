@@ -14,4 +14,4 @@
  * @internal    @modx_category Commerce
  */
  
-require MODX_BASE_PATH.'assets/plugins/commercecoupons/plugin.commercecoupons.php';
+require MODX_BASE_PATH.'assets/plugins/CommerceCoupons/plugin.CommerceCoupons.php';

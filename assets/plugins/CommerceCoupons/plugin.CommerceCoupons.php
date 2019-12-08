@@ -24,7 +24,7 @@ switch ($e->name) {
                     $summ = $params['total'] * $discount['amount'] / 100;
                     break;
                 case 'summ':
-                    $summ = $discount['amount'];
+                    $summ = ci()->currency->convertToActive($discount['amount']);
                     break;
                 break;
             }

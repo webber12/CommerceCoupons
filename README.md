@@ -44,6 +44,9 @@ $(document).ready(function(){
 </script>
 ```
 
+# Ограничения
+- требуется версия MySQL >=5.6
+
 
 
 

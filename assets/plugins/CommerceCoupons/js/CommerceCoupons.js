@@ -46,12 +46,12 @@ $(document).ready(function(){
     CommerceCoupons.bind();
 
     $(document).on("commerce-coupon-ok-add", function(){
-        Commerce.updateCarts();
+        Commerce.reloadCarts();
     })
     $(document).on("commerce-coupon-error-limits", function(){
-        Commerce.updateCarts();
+        Commerce.reloadCarts();
     })
     $(document).on("commerce-coupon-error-unactive", function(){
-        Commerce.updateCarts();
+        Commerce.reloadCarts();
     })
 })

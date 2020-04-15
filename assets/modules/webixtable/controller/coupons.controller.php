@@ -16,7 +16,7 @@ class CouponsController extends \WebixTable\MainController
         $defaults = [
             'length' => 8,
             'count' => 1,
-            'limit' => 1,
+            'limit_orders' => 1,
             'active' => 0
         ];
         $params = array_merge($defaults, $_REQUEST);
@@ -24,25 +24,14 @@ class CouponsController extends \WebixTable\MainController
         $coupons = $this->makeCoupons($params);
         unset($params['action'], $params['module_id'], $params['count'], $params['length'], $params['stay']);
         if (!empty($params['discount'])) unset($params['discount_summ']);
-        $ins = [];
+        if (empty($params['date_start'])) unset($params['date_start']);
+        if (empty($params['date_finish'])) unset($params['date_finish']);
+        $fields = $params;
         foreach ($coupons as $coupon) {
-            $ins[] = "'" . implode("','", [
-                $params['name'],
-                $coupon,
-                $params['date_start'],
-                $params['date_finish'],
-                $params['discount'],
-                $params['discount_summ'],
-                $params['limit'],
-                $params['active']
-            ]) . "'";
+            $fields['code'] = $coupon;
+            $this->modx->db->insert($fields, $this->getTable());
         }
-        $sql = "INSERT INTO " . $this->getTable() . " (`name`, `code`, `date_start`, `date_finish`, `discount`, `discount_summ`, `limit_orders`, `active`) VALUES " . "(" . implode("), (", $ins). ")";
-        $ins = $this->modx->db->query($sql);
-        $resp = 'error';
-        if ($ins) {
-            $resp = 'ok';
-        }
+        $resp = 'ok';
         return $resp;
     }
     

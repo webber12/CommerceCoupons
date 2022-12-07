@@ -102,6 +102,7 @@
                     {view:"counter", label:"Количество купонов", name:"count", value:"5", min:"1"},
                     {view:"text", label:"Имя купона", name:"name"},
                     {view:"counter", label:"Количество символов", name:"length", value:"8", min:"3", max:"15"},
+                    {view:"textarea", label:"Тип", name:"coupon_type", height:"100"},
                     {view:"datepicker", label:"Действителен с", name:"date_start"},
                     {view:"datepicker", label:"Действителен по", name:"date_finish"},
                     {view:"text", label:"Скидка %", name:"discount", pattern:{ mask:"##", allow:/[0-9]/g}, value:"5", min:"1"},
@@ -109,14 +110,12 @@
                     {view:"counter", label:"Лимит заказов по купону", name:"limit_orders", value:"1"},
                     {view:"checkbox", label:"Сразу активен", name:"active", value:"1"},
                     { margin:5, cols:[
-                        { view:"button", value: "Submit", type:"form", css:"webix_primary", click:generate_coupons},
-                        { view:"button", value: "Cancel", click: function (elementId, event) {
+                        { view:"button", css:"webix_secondary", label: "Применить", click:generate_coupons},
+                        { view:"button", css:"webix_primary", label: "Отмена", click: function (elementId, event) {
                             this.getTopParentView().hide();
                         }}
                     ]},
-                    {rows : [
-                        {template:"The End", type:"section"}
-                    ]}
+
                 ],
                 rules:{},
                 elementsConfig:{
@@ -152,6 +151,7 @@
                         { view:"button", type:"icon", icon:"wxi-sync", label:"", tooltip:"Обновить данные", click:"refresh", autowidth:true  },
                         { view:"button", type:"icon", icon:"wxi-radiobox-blank", label:"", tooltip:"Перегрузить полностью", click:"reload", autowidth:true },
                         { view:"button", type:"icon", icon:"wxi-trash",  label:"Удалить", width:110, css:"webix_danger", click:"del_row" },
+                        { view:"button", type:"icon", icon:"wxi-search",  label:"Инфо", width:110, css:"webix_danger", click:"show_info" },
                         ]
                     },
                     [+add_search_form+]
@@ -195,6 +195,31 @@
                     }
                 }
             });
+        webix.ui({
+            view:"window",
+            id:"win_info",
+            width:500,
+            height:500,
+            position:"center",
+            modal:true,
+            head:{
+                view:"toolbar", margin:5, cols:[
+                    {view:"label", label: "Информация" },
+                    {view:"icon", icon:"wxi-close", click:"$$('win_info').hide();", tooltip:"Закрыть"}
+                ]
+            },
+            body:"Доступны 2 типа купонов:<br>" +
+                "<br>1. применяется ко всей корзине (тип - cart) и позволяет также задать минимальную сумму, от которой он начинает действовать (формат - cart:1000)<br>" +
+                "<br>2. применяется к отдельным товарам, папкам либо товарам с определенными tv - например:" +
+                "<br> &nbsp;" +
+                "<br><code>1;2;3;parents:4,5;brand:6,7</code><br>" +
+                "<br> &nbsp;" +
+                "применят действие купона " +
+                "<br> - к товарам с id 1,2,3, " +
+                "<br> - к товарам, чьи родительские папки имеют id 4 и 5, " +
+                "<br> - а также к товарам, чье tv-поле brand будет иметь значение 6 или 7<br>" +
+                "<br>* - при пустом значении в поле Тип купон применятеся к каждому товару в корзине"
+        });
             $$("cmenu").attachTo($$("mydatatable"));
         });
 
@@ -283,6 +308,9 @@
         function make_coupons() {
             /*$$("win_generate").getBody().clear();*/
             $$("win_generate").show();
+        }
+        function show_info() {
+            $$("win_info").show();
         }
         function generate_coupons() {
             webix.ajax().post("[+module_url+]action.php?action=GenerateCoupons&module_id=[+module_id+]", $$("form_generate").getValues(), function(text, data, xhr){ 

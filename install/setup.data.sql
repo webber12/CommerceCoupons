@@ -7,6 +7,7 @@ CREATE TABLE `{PREFIX}commerce_coupons` (
   `date_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `discount` decimal(10,2) NOT NULL DEFAULT '0.00',
   `discount_summ` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `coupon_type` text NOT NULL,
   `limit_orders` int(10) NOT NULL DEFAULT '1',
   `active` tinyint(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)

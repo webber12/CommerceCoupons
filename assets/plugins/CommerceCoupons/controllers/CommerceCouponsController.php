@@ -47,8 +47,12 @@ class CommerceCouponsController
     
     public function rememberOrder($params)
     {
-        if (!empty($_SESSION['CommerceCoupon'])) {
-            $this->modx->db->insert([ 'order_id' => $params['order_id'], 'coupon_id' => $_SESSION['CommerceCoupon'] ], $this->table_orders);
+        $couponInfo = $this->getCouponInfo();
+        if (!empty($couponInfo)) {
+            $this->modx->db->insert(
+                [ 'order_id' => $params['order_id'], 'coupon_id' => $couponInfo['id'], 'coupon_info' => json_encode($couponInfo, JSON_UNESCAPED_UNICODE) ],
+                $this->table_orders
+            );
         }
     }
     
@@ -66,7 +70,7 @@ class CommerceCouponsController
         if ($this->modx->db->getRecordCount($q) > 0) {
             $row = $this->modx->db->getRow($q);
             $orders = $this->modx->db->getValue("SELECT COUNT(*) FROM " . $this->table_orders . " WHERE coupon_id=" . $row['id']);
-            if ($orders < $row['limit_orders']) {
+            if (empty($row['limit_orders']) || $orders < $row['limit_orders']) {
                 $output = ['status' => 'ok', 'message' => 'add'];
                 $couponInfo = $this->makeCouponInfo($row);
                 // сохраняем информацию о применяемом купоне,
@@ -139,6 +143,61 @@ class CommerceCouponsController
 
         }
         return $params;
+    }
+
+    public function OnManagerBeforeOrderRender($params)
+    {
+        $sql = "select * from " . $this->table_orders . " where order_id=" . $params['order']['id'] . " limit 1";
+        $q = $this->modx->db->query($sql);
+        if($this->modx->db->getRecordCount($q) == 1) {
+            $row = $this->modx->db->getRow($q);
+            if(!empty($row['coupon_info'])) {
+                $couponInfo = json_decode($row['coupon_info'], 1);
+                $params['groups']['order_info']['fields']['coupon'] = [
+                    'title' => '<b>Купон</b>',
+                    'content' => function($data) use($couponInfo) {
+                        return $couponInfo['code'] . ' (#' . $couponInfo['id'] . ')';
+                    },
+                    'sort' => 55,
+                ];
+                $params['groups']['order_info']['fields']['coupon_type'] = [
+                    'title' => 'Тип купона',
+                    'content' => function($data) use($couponInfo) {
+                        $out = '';
+                        switch($couponInfo['info']['type']) {
+                            case 'product':
+                                $out = 'К продукту';
+                                break;
+                            case 'cart':
+                                $out = 'К корзине';
+                                break;
+                            default:
+                                break;
+                        }
+                        return $out;
+                    },
+                    'sort' => 56,
+                ];
+                $params['groups']['order_info']['fields']['coupon_discount'] = [
+                    'title' => 'Скидка по купону',
+                    'content' => function($data) use($couponInfo) {
+                        $out = '';
+                        switch($couponInfo['type']) {
+                            case 'percent':
+                                $out = $couponInfo['amount'] . '%';
+                                break;
+                            case 'summ':
+                                $out = 'фикс сумма ' . $couponInfo['amount'];
+                                break;
+                            default:
+                                break;
+                        }
+                        return $out;
+                    },
+                    'sort' => 57,
+                ];
+            }
+        }
     }
 
     protected function setCouponInfo($couponInfo)

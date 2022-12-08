@@ -4,7 +4,7 @@ if (!defined('MODX_BASE_PATH')) {
 }
 
 $e = $modx->event;
-$events = ['OnWebPageInit', 'OnCollectSubtotals', 'OnOrderSaved', 'OnBeforeCartItemAdding'];
+$events = ['OnWebPageInit', 'OnCollectSubtotals', 'OnOrderSaved', 'OnBeforeCartItemAdding', 'OnManagerBeforeOrderRender'];
 if (in_array($e->name, $events)) {
     include_once MODX_BASE_PATH . "assets/plugins/CommerceCoupons/controllers/CommerceCouponsController.php";
     $controller = \CommerceCoupons\CommerceCouponsController::getInstance($params);
@@ -27,7 +27,11 @@ switch ($e->name) {
         $controller->rememberOrder($params);
         $discount = $controller->destroyCoupon();
         break;
-        
+
+    case 'OnManagerBeforeOrderRender':
+        $controller->OnManagerBeforeOrderRender($params);
+        break;
+
     default:
         break;
 }

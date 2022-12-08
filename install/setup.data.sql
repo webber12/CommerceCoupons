@@ -17,5 +17,6 @@ CREATE TABLE `{PREFIX}commerce_coupons` (
 CREATE TABLE `{PREFIX}commerce_coupons_orders` (
   `coupon_id` int(10) NOT NULL,
   `order_id` int(10) NOT NULL,
+  `coupon_info` text NOT NULL,
   UNIQUE KEY `coupon_id_order_id` (`coupon_id`,`order_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

@@ -10,6 +10,9 @@
         .webix_cell{-webkit-transition: all .3s,-moz-transition: all .3s,-o-transition: all .3s,transition: all .3s}
         .webix_cell:nth-child(odd){background-color:#f6f8f8;}
         .webix_cell:hover{background-color: rgba(93, 109, 202, 0.16);}*/
+        .webix_cell.unactive{color:#ababab;}
+        .webix_cell.used{color:#dd0000;}
+        .webix_cell.outofdate{color:#dd0000;background:#efefef;}
     </style>
     <script src="[+module_url+]/vendor/7.1.3/webix.min.js" type="text/javascript"></script>
     <script src="[+module_url+]/vendor/7.1.3/i18n/ru.js" type="text/javascript" charset="utf-8"></script>
@@ -156,6 +159,26 @@
                     },
                     [+add_search_form+]
                     { view:"datatable",
+                        scheme:{
+                            $change:function(item){
+                                if (item.limit_orders > 0 && item.limit_orders == item.used) {
+                                    item.$css = "used";
+                                }
+                                if (item.active != 1) {
+                                    item.$css = "unactive";
+                                }
+                                let date_flag = false;
+                                if(item.date_start) {
+                                    date_flag = new Date(item.date_start) > new Date();
+                                }
+                                if(item.date_finish) {
+                                    date_flag = new Date(item.date_finish) < new Date();
+                                }
+                                if(date_flag) {
+                                    item.$css = "outofdate";
+                                }
+                            }
+                        },
                         autoheight:true,select:"row",
                         resizeColumn:true,
                         id:"mydatatable",
@@ -222,7 +245,11 @@
                 "<br><b>Лимиты на применение:</b><br>" +
                 "<br>Вы можете установить для каждого купона сколько раз он может быть применен. По-умолчанию купоны одноразовые " +
                 "<br>т.е. могут использоваться для одного заказа. В случае, если купон безлимитный - " +
-                "просто оставьте поле 'Лимит' пустым (равно 0)"
+                "просто оставьте поле 'Лимит' пустым (равно 0)<br>" +
+                "<br><b>Цветовая дифференциация:</b><br>" +
+                "<br><span style='color:#ababab;'>неактивен</span>" +
+                " &nbsp; <span style='color:#dd0000'>использован весь лимит</span>" +
+                " &nbsp; <span style='color:#dd0000;background:#efefef;'>срок действия истек</span>"
         });
             $$("cmenu").attachTo($$("mydatatable"));
         });

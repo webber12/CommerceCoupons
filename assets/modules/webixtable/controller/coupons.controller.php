@@ -63,6 +63,23 @@ class CouponsController extends \WebixTable\MainController
         if (empty($data['date_finish'])) $data['date_finish'] = NULL;
         return $data;
     }
+   
+    protected function invokeOnAfterMakeListing($data)
+    {
+        if(!empty($data['data'])) {
+            $ids = array_column($data['data'], 'id');
+            $sql = "select coupon_id, count(*) as cnt from " . $this->modx->getFullTableName('commerce_coupons_orders') . " where coupon_id in(" . implode(',', $ids) . ") group by coupon_id";
+            $q = $this->modx->db->query($sql);
+            $counts = [];
+            while($row = $this->modx->db->getRow($q)) {
+                $counts[ $row['coupon_id'] ] = $row['cnt'];
+            }
+            foreach($data['data'] as $k => $v) {
+                $data['data'][$k]['used'] = $counts[ $v['id'] ] ?? 0;
+            }
+        }
+        return $data;
+    }
 
 }
 

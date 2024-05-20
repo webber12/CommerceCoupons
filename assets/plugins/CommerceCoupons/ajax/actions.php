@@ -7,6 +7,9 @@ use \CommerceCoupons\CommerceCouponsController;
 class Actions
 {
 
+    protected $modx;
+    protected $params;
+
     public function __construct($modx, $params = array())
     {
         $this->modx = $modx;

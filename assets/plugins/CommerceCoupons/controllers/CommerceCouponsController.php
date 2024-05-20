@@ -3,6 +3,10 @@
 class CommerceCouponsController
 {
     private static $instance = null;
+    protected $modx;
+    protected $params;
+    protected $table;
+    protected $table_orders;
 
     public function __construct($params = [])
     {

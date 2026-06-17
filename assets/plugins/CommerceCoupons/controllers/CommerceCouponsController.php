@@ -96,13 +96,19 @@ class CommerceCouponsController
         if(!empty($couponInfo['info']['type']) && $couponInfo['info']['type'] == 'cart') {
             //купон необходимо применить ко всей корзине
             $cart = ci()->carts->getCart($this->getActiveCart());
-            $total = $cart->getTotal();
+            //$total = $cart->getTotal();
+            $items = $cart->getItems();
+            $total = 0;
+            foreach($items as $item) {
+                $total += $item['count'] * $item['price'];
+            }
             $min = ci()->currency->convertToActive($couponInfo['info']['minsumm'] ?? 0);
             if($total >= $min) {
                 $summ = 0;
                 switch ($couponInfo['type']) {
                     case 'percent':
-                        $summ = $params['total'] * $couponInfo['amount'] / 100;
+                        //$summ = $params['total'] * $couponInfo['amount'] / 100;
+                        $summ = $total * $couponInfo['amount'] / 100;
                         break;
                     case 'summ':
                         $summ = ci()->currency->convertToActive($couponInfo['amount']);
@@ -219,7 +225,7 @@ class CommerceCouponsController
     {
         $arr = $row;
         switch(true) {
-            case (strpos($row['coupon_type'], 'cart') !== false) :
+            case (strpos($row['coupon_type'], 'cart') !== false || empty($row['coupon_type'])) :
                 //купон для всей корзины
                 $tmp = array_map('trim', explode(':', $row['coupon_type'], 2));
                 if(!empty($tmp[1]) && is_numeric($tmp[1])) {

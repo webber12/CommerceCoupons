@@ -260,12 +260,12 @@ class CommerceCouponsController
                 case (strpos($row, 'parents:') !== false):
                     //тут отбор id по родителю
                     $parents = explode(':', $row,2)[1];
-                    $ids = $this->getIdsFromParents($ids, $parents);
+                    $ids = $this->getIdsFromParents($parents, $ids);
                     break;
                     case (strpos($row, ':') !== false):
                         //тут отбор id по имени тв
                         $tv = explode(':', $row,2);
-                        $ids = $this->getIdsFromTV($ids, $tv);
+                        $ids = $this->getIdsFromTV($tv, $ids);
                         break;
                 default:
                     $ids[] = $row;
@@ -274,7 +274,7 @@ class CommerceCouponsController
         return array_unique($ids);
     }
 
-    protected function getIdsFromParents($ids = [], $parents)
+    protected function getIdsFromParents($parents, $ids = [])
     {
         $q = $this->modx->db->query('select id from ' . $this->modx->getFullTableName('site_content') . ' where parent IN (' . $parents . ') and deleted=0 and published=1');
         while($row = $this->modx->db->getRow($q)) {
@@ -283,7 +283,7 @@ class CommerceCouponsController
         return $ids;
     }
 
-    protected function getIdsFromTV($ids = [], $tv)
+    protected function getIdsFromTV($tv, $ids = [])
     {
         $sql = "select `v`.`contentid` from " . $this->modx->getFullTableName('site_tmplvar_contentvalues') . " v left join " . $this->modx->getFullTableName('site_tmplvars') . " t on t.id=v.tmplvarid where `t`.`name`='" . $tv[0] . "' and `v`.`value` IN('" . str_replace(",", "','", $tv[1]) . "')";
         $q = $this->modx->db->query($sql);
@@ -300,8 +300,12 @@ class CommerceCouponsController
         $cart = ci()->carts->getCart($this->getActiveCart());
         $items = $cart->getItems();
         $add = [];
+        $flag = false;
         foreach($items as $item) {
-            unset($item['meta']['CommerceCoupons']);
+            if(isset($item['meta']['CommerceCoupons'])) {
+                $flag = true;
+                unset($item['meta']['CommerceCoupons']);
+            }
             $add[] = [
                 'id' => $item['id'],
                 'count' => $item['count'],
@@ -310,8 +314,10 @@ class CommerceCouponsController
                 'meta' => $item['meta'],
             ];
         }
-        $cart->clean();
-        $cart->addMultiple($add);
+        if($flag) { //перегружаем, только если ранее применялся купон к товару
+            $cart->clean();
+            $cart->addMultiple($add);
+        }
     }
 
     protected function getActiveCart()

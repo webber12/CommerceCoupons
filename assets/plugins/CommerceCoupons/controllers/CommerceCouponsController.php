@@ -133,7 +133,7 @@ class CommerceCouponsController
             //купон применяется к конкретному товару
             //проверяем, что он применяется к данному товару
             if(empty($couponInfo['info']['ids']) || (!empty($couponInfo['info']['ids']) && in_array($params['item']['id'], $couponInfo['info']['ids']))) {
-                $original_price = !empty($params['item']['meta']['original_price']) ? $params['item']['meta']['original_price'] : $params['item']['price'];
+                $original_price = !empty($params['item']['meta']['CommerceCoupon']['original_price']) ? $params['item']['meta']['CommerceCoupon']['original_price'] : $params['item']['price'];
                 $new_price = 0;
                 switch ($couponInfo['type']) {
                     case 'percent':
@@ -146,8 +146,8 @@ class CommerceCouponsController
                         break;
                 }
                 $params['item']['price'] = $new_price;
-                $params['item']['original_price'] = $original_price;
                 $params['item']['meta']['CommerceCoupon'] = $couponInfo;
+                $params['item']['meta']['CommerceCoupon']['original_price'] = $original_price;
             } else {
                 unset($params['item']['meta']['CommerceCoupon']);
             }

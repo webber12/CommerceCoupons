@@ -2,7 +2,7 @@
 <html>
     <head>
     <link rel="stylesheet" href="media/style/common/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="[+module_url+]/vendor/7.1.3/webix.min.css" type="text/css">
+    <link rel="stylesheet" href="[+module_url+]vendor/7.1.3/webix.min.css" type="text/css">
     <link rel="stylesheet" href="[+module_url+]skin/skin.css" type="text/css">
     <style>
         body.webix_full_screen{overflow:auto !important;}
@@ -14,8 +14,8 @@
         .webix_cell.used{color:#dd0000;}
         .webix_cell.outofdate{color:#dd0000;background:#efefef;}
     </style>
-    <script src="[+module_url+]/vendor/7.1.3/webix.min.js" type="text/javascript"></script>
-    <script src="[+module_url+]/vendor/7.1.3/i18n/ru.js" type="text/javascript" charset="utf-8"></script>
+    <script src="[+module_url+]vendor/7.1.3/webix.min.js" type="text/javascript"></script>
+    <script src="[+module_url+]vendor/7.1.3/i18n/ru.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" src="https://cdn.webix.com/components/edge/ckeditor5/ckeditor5.js"></script>
     </head>
     <body class="[+manager_theme_mode+]">

@@ -146,6 +146,7 @@ class CommerceCouponsController
                         break;
                 }
                 $params['item']['price'] = $new_price;
+                $params['item']['original_price'] = $original_price;
                 $params['item']['meta']['CommerceCoupon'] = $couponInfo;
             } else {
                 unset($params['item']['meta']['CommerceCoupon']);
